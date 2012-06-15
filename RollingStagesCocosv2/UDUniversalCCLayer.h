@@ -35,6 +35,7 @@
     UDEmitterMethods *badBonusEmitterMethods;
     UDEmitterMethods *victoryMethods;
     
+    b2Vec2 prevVel;
     CCLabelTTF *label;
 
 }

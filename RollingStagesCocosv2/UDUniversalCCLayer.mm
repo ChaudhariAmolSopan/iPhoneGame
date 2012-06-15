@@ -90,8 +90,19 @@
     [healthBar reduceHealthHandler:_player];
     [label setString:[NSString stringWithFormat:@"%d",[scoringSystem getScore]]];
 
-    CCLOG(@"%f",healthBar.healthHiderLayer.scaleX);
-    
+//    CCLOG(@"%f",healthBar.healthHiderLayer.scaleX);
+
+    b2Vec2 currentVel = _player.body->GetLinearVelocity();
+    CCLOG(@"%d %d",currentVel.x, currentVel.y);
+
+    if (currentVel.x <= .05 * prevVel.x and currentVel.y <= .05 * prevVel.y)
+    {
+        appDelegate.hasPlayerMadeContact=NO;
+
+    }
+ 
+    prevVel = currentVel;
+
     if (healthBar.isDead == YES or [[GameManager sharedGameManager] hasPlayerWon] == YES)  {
         [self winLost];
         [self unscheduleUpdate];
@@ -182,16 +193,17 @@
 }
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    if (appDelegate.hasPlayerMadeContact==YES) {
+/*    if (appDelegate.hasPlayerMadeContact==YES) {
         appDelegate.hasPlayerMadeContact=NO;
         
     }
+*/
 }
 
 -(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration
 {
     //This simply converts the accelerometer input to a gravity vector. It multiplies the accelerometer result (which typically ranges between −1 and 1) by 15, in order to get a nice feel for gravity in the level. Since Space Viking is set up to run in landscape mode (and accelerometer data is given in portrait orientation), it reverses the x and y coordi- nates and f lips the sign of the y coordinate to get the proper vector.
-    b2Vec2 gravity (-acceleration.y * 50,acceleration.x * 50);
+    b2Vec2 gravity (-acceleration.y * 5,acceleration.x * 5);
     
     
     
@@ -200,20 +212,27 @@
         appDelegate.detectCollisionToReduceHealth=NO;
     }
     
-    if (appDelegate.hasPlayerMadeContact) {
+
+ if (appDelegate.hasPlayerMadeContact) {
         
         b2Vec2 gravity (-acceleration.y * 30,acceleration.x * 30);
         
         _world ->SetGravity(gravity);
+
+//     _player.body->SetLinearVelocity(gravity);
+
+
         
         
     }
     else
     {
+//        _world ->SetGravity(gravity);
+
         _player.body->SetLinearVelocity(gravity);
     }
-    
-    
+   
+ 
 }
 
 
